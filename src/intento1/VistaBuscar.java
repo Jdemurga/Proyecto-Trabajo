@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -29,6 +30,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -79,7 +81,7 @@ public class VistaBuscar extends JFrame {
 	private JLabel lblPrecio;
 	private FondoEscritorio contenedor = new FondoEscritorio();
 	private JButton btnExportar;
-
+	private File fichero;
 	public VistaBuscar() {
 		setIconImage(
 				Toolkit.getDefaultToolkit().getImage(VistaLogin.class.getResource("/img/icono_flojo - copia.png")));
@@ -287,9 +289,16 @@ public class VistaBuscar extends JFrame {
 		btnExportar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-//				fichero();
-				
-				
+				// fichero();
+				String nombreFichero=JOptionPane.showInputDialog("nombre del archivo");
+				fichero=new File("C:/Users/"+System.getProperty("user.name")+"/Desktop/"+nombreFichero+".xls");
+				try {
+					exportarjTable(table, fichero );
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
 			}
 		});
 
@@ -833,59 +842,84 @@ public class VistaBuscar extends JFrame {
 
 	}
 
-//	public void fichero() {
-//		Properties propiedades = new Properties();
-//		OutputStream salida = null;
-//		int filas=table.getRowCount();
-//		try {
-//			File miFichero = new File("C:/Users/Cesar/Desktop/tabla.txt");
-//			if (miFichero.exists()) {
-//				salida = new FileOutputStream(miFichero, true);
-//				// asignamos los valores a las propiedades
-//				for (int i = 0; i < filas; i++) {
-//					propiedades.setProperty("Nombre",table.getValueAt(i, 0).toString());
-//					propiedades.setProperty("Correo_Cuenta ", table.getValueAt(i, 1).toString());
-//					propiedades.setProperty("Correo_Privado ", table.getValueAt(i, 3).toString());
-//					propiedades.setProperty("Licencia", table.getValueAt(i, 5).toString());
-//					propiedades.setProperty("Servidor", table.getValueAt(i, 6).toString());
-//					propiedades.setProperty("IP", table.getValueAt(i, 7).toString());
-//					propiedades.setProperty("Dominio",table.getValueAt(i, 9).toString());
-//					propiedades.setProperty("U.Local", table.getValueAt(i, 11).toString());
-//					propiedades.setProperty("Owncloud", table.getValueAt(i, 13).toString());
-//					propiedades.setProperty("S.Operativo_Servidor", table.getValueAt(i, 15).toString());
-//					propiedades.store(salida, "-----------------------------------------------------");
-//
-//				}
-//				
-//				// guardamos el archivo de propiedades en la carpeta de
-//				// aplicación
-//				propiedades.store(salida, "-----------------------------------------------------");
-//			} else {
-//				miFichero.createNewFile();
-//				salida = new FileOutputStream(miFichero, true);
-//				for (int i = 0; i < filas; i++) {
-//					propiedades.setProperty("Nombre",table.getValueAt(i, 0).toString());
-//					propiedades.setProperty("Correo_Cuenta ", table.getValueAt(i, 1).toString());
-//					propiedades.setProperty("Correo_Privado ", table.getValueAt(i, 3).toString());
-//					propiedades.setProperty("Licencia", table.getValueAt(i, 5).toString());
-//					propiedades.setProperty("Servidor", table.getValueAt(i, 6).toString());
-//					propiedades.setProperty("IP", table.getValueAt(i, 7).toString());
-//					propiedades.setProperty("Dominio",table.getValueAt(i, 9).toString());
-//					propiedades.setProperty("U.Local", table.getValueAt(i, 11).toString());
-//					propiedades.setProperty("Owncloud", table.getValueAt(i, 13).toString());
-//					propiedades.setProperty("S.Operativo_Servidor", table.getValueAt(i, 15).toString());
-//					propiedades.store(salida, "-----------------------------------------------------");
-//				}
-//				
-//				
-//
-//				System.err.println("Fichero creado");
-//
-//			}
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
-//	}
+	// public void fichero() {
+	// Properties propiedades = new Properties();
+	// OutputStream salida = null;
+	// int filas=table.getRowCount();
+	// try {
+	// File miFichero = new File("C:/Users/Cesar/Desktop/tabla.txt");
+	// if (miFichero.exists()) {
+	// salida = new FileOutputStream(miFichero, true);
+	// // asignamos los valores a las propiedades
+	// for (int i = 0; i < filas; i++) {
+	// propiedades.setProperty("Nombre",table.getValueAt(i, 0).toString());
+	// propiedades.setProperty("Correo_Cuenta ", table.getValueAt(i,
+	// 1).toString());
+	// propiedades.setProperty("Correo_Privado ", table.getValueAt(i,
+	// 3).toString());
+	// propiedades.setProperty("Licencia", table.getValueAt(i, 5).toString());
+	// propiedades.setProperty("Servidor", table.getValueAt(i, 6).toString());
+	// propiedades.setProperty("IP", table.getValueAt(i, 7).toString());
+	// propiedades.setProperty("Dominio",table.getValueAt(i, 9).toString());
+	// propiedades.setProperty("U.Local", table.getValueAt(i, 11).toString());
+	// propiedades.setProperty("Owncloud", table.getValueAt(i, 13).toString());
+	// propiedades.setProperty("S.Operativo_Servidor", table.getValueAt(i,
+	// 15).toString());
+	// propiedades.store(salida,
+	// "-----------------------------------------------------");
+	//
+	// }
+	//
+	// // guardamos el archivo de propiedades en la carpeta de
+	// // aplicación
+	// propiedades.store(salida,
+	// "-----------------------------------------------------");
+	// } else {
+	// miFichero.createNewFile();
+	// salida = new FileOutputStream(miFichero, true);
+	// for (int i = 0; i < filas; i++) {
+	// propiedades.setProperty("Nombre",table.getValueAt(i, 0).toString());
+	// propiedades.setProperty("Correo_Cuenta ", table.getValueAt(i,
+	// 1).toString());
+	// propiedades.setProperty("Correo_Privado ", table.getValueAt(i,
+	// 3).toString());
+	// propiedades.setProperty("Licencia", table.getValueAt(i, 5).toString());
+	// propiedades.setProperty("Servidor", table.getValueAt(i, 6).toString());
+	// propiedades.setProperty("IP", table.getValueAt(i, 7).toString());
+	// propiedades.setProperty("Dominio",table.getValueAt(i, 9).toString());
+	// propiedades.setProperty("U.Local", table.getValueAt(i, 11).toString());
+	// propiedades.setProperty("Owncloud", table.getValueAt(i, 13).toString());
+	// propiedades.setProperty("S.Operativo_Servidor", table.getValueAt(i,
+	// 15).toString());
+	// propiedades.store(salida,
+	// "-----------------------------------------------------");
+	// }
+	//
+	//
+	//
+	// System.err.println("Fichero creado");
+	//
+	// }
+	// } catch (IOException ex) {
+	// ex.printStackTrace();
+	// }
+	// }
+	public void exportarjTable(JTable tabla, File ficheroXLS) throws IOException {
+		TableModel modelo = tabla.getModel();
+		FileWriter fichero = new FileWriter(ficheroXLS);
+
+		for (int i = 0; i < modelo.getColumnCount(); i++) {
+			fichero.write(modelo.getColumnName(i) + "\t");
+		}
+		fichero.write("\n");
+		for (int i = 0; i < modelo.getRowCount(); i++) {
+			for (int j = 0; j < modelo.getColumnCount(); j++) {
+				fichero.write(modelo.getValueAt(i, j).toString() + "\t");
+			}
+			fichero.write("\n");
+		}
+		fichero.close();
+	}
 
 	public void setControlador(Controlador controlador) {
 		this.controlador = controlador;
