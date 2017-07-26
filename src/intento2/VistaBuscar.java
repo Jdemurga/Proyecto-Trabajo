@@ -1,4 +1,4 @@
-package intento1;
+package intento2;
 
 import java.awt.Color;
 
@@ -58,30 +58,18 @@ public class VistaBuscar extends JFrame {
 	private String usr = "AriasDataBase";
 	private Connection conexion;
 	public DefaultTableModel dftm = new DefaultTableModel();
+	public DefaultTableModel dftm2 = new DefaultTableModel();
+
 	private Statement stmt;
 	private JTextField textField;
 	private JComboBox comboBox;
 	private JButton btnBorrar;
-	private JButton btnPc;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_5;
-	private JTextField textField_6;
 	private JLabel lblEquipo;
-	private JButton btnNewButton;
-	private JLabel lblTipo;
-	private JLabel lblProcesador;
-	private JLabel lblRam;
-	private JLabel lblSistema;
-	private JLabel lblSistemaOperativo;
-	private JLabel lblNewLabel;
-	private JComboBox comboBox_1;
-	private JComboBox comboBox_2;
-	private JTextField textField_1;
-	private JLabel lblPrecio;
 	private FondoEscritorio contenedor = new FondoEscritorio();
 	private JButton btnExportar;
 	private File fichero;
+	private JTable table_1;
+
 	public VistaBuscar() {
 		setIconImage(
 				Toolkit.getDefaultToolkit().getImage(VistaLogin.class.getResource("/img/icono_flojo - copia.png")));
@@ -92,28 +80,8 @@ public class VistaBuscar extends JFrame {
 		contenedor.setBackground(Color.BLUE);
 		conectar();
 		actualizar();
+
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				lblEquipo.setVisible(false);
-				lblPrecio.setVisible(false);
-				btnNewButton.setVisible(false);
-				lblTipo.setVisible(false);
-				lblProcesador.setVisible(false);
-				lblRam.setVisible(false);
-				lblSistema.setVisible(false);
-				lblSistemaOperativo.setVisible(false);
-				lblNewLabel.setVisible(false);
-				comboBox_1.setVisible(false);
-				comboBox_2.setVisible(false);
-				textField_1.setVisible(false);
-				textField_2.setVisible(false);
-				textField_3.setVisible(false);
-				textField_5.setVisible(false);
-				textField_6.setVisible(false);
-			}
-		});
 
 		JButton btnVolver = new JButton("volver");
 		btnVolver.addMouseListener(new MouseAdapter() {
@@ -131,6 +99,7 @@ public class VistaBuscar extends JFrame {
 				if (!textField.equals("") && comboBox.getSelectedItem().equals("Nombre")) {
 					while (dftm.getRowCount() > 0) {
 						dftm.removeRow(0);
+						dftm2.removeRow(0);
 					}
 					buscarNombre();
 				} else {
@@ -138,6 +107,8 @@ public class VistaBuscar extends JFrame {
 					if (!textField.equals("") && comboBox.getSelectedItem().equals("Cuenta")) {
 						while (dftm.getRowCount() > 0) {
 							dftm.removeRow(0);
+							dftm2.removeRow(0);
+
 						}
 						buscarCuenta();
 					} else {
@@ -145,6 +116,7 @@ public class VistaBuscar extends JFrame {
 							dftm.removeRow(0);
 						}
 						rellenarTabla();
+						rellenarTabla2();
 					}
 				}
 			}
@@ -165,7 +137,11 @@ public class VistaBuscar extends JFrame {
 				while (dftm.getRowCount() > 0) {
 					dftm.removeRow(0);
 				}
+				while (dftm2.getRowCount() > 0) {
+					dftm2.removeRow(0);
+				}
 				rellenarTabla();
+				rellenarTabla2();
 			}
 		});
 
@@ -178,122 +154,21 @@ public class VistaBuscar extends JFrame {
 			}
 		});
 
-		btnPc = new JButton("EQUIPO");
-		btnPc.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				darValor();
-				lblEquipo.setVisible(true);
-				lblPrecio.setVisible(true);
-				btnNewButton.setVisible(true);
-				lblTipo.setVisible(true);
-				lblProcesador.setVisible(true);
-				lblRam.setVisible(true);
-				lblSistema.setVisible(true);
-				lblSistemaOperativo.setVisible(true);
-				lblNewLabel.setVisible(true);
-				comboBox_1.setVisible(true);
-				comboBox_2.setVisible(true);
-				textField_1.setVisible(true);
-				textField_2.setVisible(true);
-				textField_3.setVisible(true);
-				textField_5.setVisible(true);
-				textField_6.setVisible(true);
-			}
-		});
-		btnPc.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-			}
-		});
-
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-
-		textField_6 = new JTextField();
-		textField_6.setColumns(10);
-
-		lblEquipo = new JLabel("Equipo :");
+		lblEquipo = new JLabel("Equipos :");
 		lblEquipo.setForeground(Color.WHITE);
 
-		btnNewButton = new JButton("GUARDAR");
-		btnNewButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				actualizar_tipo();
-				actualizar_procesador();
-				actualizar_ram();
-				actualizar_sistema();
-				actualizar_SistOper();
-				actualizar_Fecha();
-				actualizar_precio();
-
-			}
-		});
-
-		lblTipo = new JLabel("Tipo");
-		lblTipo.setForeground(Color.WHITE);
-
-		lblProcesador = new JLabel("Procesador");
-		lblProcesador.setForeground(Color.WHITE);
-
-		lblRam = new JLabel("RAM");
-		lblRam.setForeground(Color.WHITE);
-
-		lblSistema = new JLabel("Sistema");
-		lblSistema.setForeground(Color.WHITE);
-
-		lblSistemaOperativo = new JLabel("Sistema Operativo");
-		lblSistemaOperativo.setForeground(Color.WHITE);
-
-		lblNewLabel = new JLabel("Fecha Compra");
-		lblNewLabel.setForeground(Color.WHITE);
-
-		comboBox_1 = new JComboBox();
-		comboBox_1
-				.setModel(new DefaultComboBoxModel(new String[] { "------------", "Sobremesa", "Portatil", "Movil" }));
-
-		comboBox_2 = new JComboBox();
-		comboBox_2.setModel(new DefaultComboBoxModel(new String[] { "-----", "32", "64", "Movil" }));
-
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-
-		lblPrecio = new JLabel("Precio");
-		lblPrecio.setForeground(Color.WHITE);
-
-		lblEquipo.setVisible(false);
-		lblPrecio.setVisible(false);
-		btnNewButton.setVisible(false);
-		lblTipo.setVisible(false);
-		lblProcesador.setVisible(false);
-		lblRam.setVisible(false);
-		lblSistema.setVisible(false);
-		lblSistemaOperativo.setVisible(false);
-		lblNewLabel.setVisible(false);
-		comboBox_1.setVisible(false);
-		comboBox_2.setVisible(false);
-		textField_1.setVisible(false);
-		textField_2.setVisible(false);
-		textField_3.setVisible(false);
-		textField_5.setVisible(false);
-		textField_6.setVisible(false);
+		lblEquipo.setVisible(true);
 
 		btnExportar = new JButton("Exportar");
 		btnExportar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// fichero();
-				String nombreFichero=JOptionPane.showInputDialog("nombre del archivo");
-				fichero=new File("C:/Users/"+System.getProperty("user.name")+"/Desktop/"+nombreFichero+".xls");
+				String nombreFichero = JOptionPane.showInputDialog("nombre del archivo");
+				fichero = new File(
+						"C:/Users/" + System.getProperty("user.name") + "/Desktop/" + nombreFichero + ".xls");
 				try {
-					exportarjTable(table, fichero );
+					exportarjTable(table, table_1, fichero);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -302,124 +177,67 @@ public class VistaBuscar extends JFrame {
 			}
 		});
 
+		JScrollPane scrollPane_1 = new JScrollPane();
+
+		JLabel lblUsuarios = new JLabel("Usuarios : ");
+		lblUsuarios.setForeground(Color.WHITE);
+
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup().addContainerGap().addGroup(groupLayout
-						.createParallelGroup(
-								Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup().addGroup(groupLayout
-								.createParallelGroup(Alignment.LEADING)
-								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 996, Short.MAX_VALUE)
-								.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING).addComponent(btnVolver)
-										.addComponent(lblBuscador))
-								.addGroup(groupLayout.createSequentialGroup().addGroup(groupLayout
-										.createParallelGroup(Alignment.LEADING)
-										.addGroup(groupLayout.createSequentialGroup()
-												.addComponent(textField, GroupLayout.PREFERRED_SIZE, 409,
-														GroupLayout.PREFERRED_SIZE)
-												.addGap(50).addComponent(btnRefrescar)
-												.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnBorrar)
-												.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnPc))
-										.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 116,
-												GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(ComponentPlacement.RELATED, 181, Short.MAX_VALUE)
-										.addComponent(btnExportar).addGap(12)))
-								.addContainerGap())
-						.addComponent(lblEquipo)
-						.addGroup(groupLayout.createSequentialGroup()
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(lblTipo)
-										.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, 116,
-												GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(lblProcesador)
-										.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, 116,
-												GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(lblRam)
-										.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-												GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(lblSistema)
-										.addComponent(comboBox_2, GroupLayout.PREFERRED_SIZE, 122,
-												GroupLayout.PREFERRED_SIZE))
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addGroup(groupLayout.createSequentialGroup().addGap(16)
-												.addComponent(lblSistemaOperativo))
-										.addGroup(groupLayout.createSequentialGroup()
-												.addPreferredGap(ComponentPlacement.RELATED).addComponent(textField_5,
-														GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-														GroupLayout.PREFERRED_SIZE)))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(textField_6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-												GroupLayout.PREFERRED_SIZE)
-										.addComponent(lblNewLabel))
-								.addGap(7)
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addGroup(groupLayout.createSequentialGroup()
-												.addComponent(textField_1, GroupLayout.PREFERRED_SIZE,
-														GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnNewButton,
-														GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE))
-										.addComponent(lblPrecio))
-								.addContainerGap(38, Short.MAX_VALUE)))));
+		groupLayout
+				.setHorizontalGroup(
+						groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup().addContainerGap().addGroup(groupLayout
+										.createParallelGroup(Alignment.TRAILING)
+										.addGroup(groupLayout
+												.createSequentialGroup().addGroup(groupLayout
+														.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
+																.createSequentialGroup()
+																.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 116,
+																		GroupLayout.PREFERRED_SIZE)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(textField, GroupLayout.PREFERRED_SIZE,
+																		409, GroupLayout.PREFERRED_SIZE)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(btnRefrescar)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(btnBorrar).addGap(206)
+																.addComponent(btnExportar))
+														.addComponent(lblBuscador).addComponent(lblUsuarios))
+												.addGap(85))
+										.addGroup(groupLayout.createSequentialGroup().addComponent(lblEquipo)
+												.addContainerGap(955, Short.MAX_VALUE))
+										.addGroup(groupLayout.createSequentialGroup().addComponent(btnVolver)
+												.addContainerGap(941, Short.MAX_VALUE))
+										.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+												.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+														.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 996,
+																GroupLayout.PREFERRED_SIZE)
+														.addComponent(scrollPane_1, Alignment.LEADING,
+																GroupLayout.PREFERRED_SIZE, 996,
+																GroupLayout.PREFERRED_SIZE))
+												.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addGroup(groupLayout.createSequentialGroup().addContainerGap().addComponent(btnVolver).addGap(21)
-						.addComponent(lblBuscador).addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-								GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(groupLayout.createSequentialGroup().addContainerGap().addComponent(btnVolver).addGap(10)
+						.addComponent(lblBuscador).addGap(7)
 						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
 								.addComponent(textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 										GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnRefrescar).addComponent(btnBorrar).addComponent(btnPc)
-								.addComponent(btnExportar))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblEquipo).addGap(18)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblTipo)
-								.addComponent(lblProcesador).addComponent(lblRam).addComponent(lblSistema)
-								.addComponent(lblSistemaOperativo).addComponent(lblNewLabel).addComponent(lblPrecio))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-										GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-								.addComponent(comboBox_2, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField_5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-										GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField_6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-										GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-										GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnNewButton))
-						.addGap(15)));
+								.addComponent(btnRefrescar).addComponent(btnBorrar).addComponent(btnExportar))
+						.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(lblUsuarios).addPreferredGap(ComponentPlacement.UNRELATED)
+						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 173, GroupLayout.PREFERRED_SIZE).addGap(1)
+						.addComponent(lblEquipo).addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 159, GroupLayout.PREFERRED_SIZE)
+						.addGap(33)));
+
+		table_1 = new JTable(dftm2);
+		scrollPane_1.setViewportView(table_1);
 
 		table = new JTable(dftm);
 		table.setBackground(Color.WHITE);
-		table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println(table.getSelectedRow());
-				lblEquipo.setVisible(false);
-				lblPrecio.setVisible(false);
-				btnNewButton.setVisible(false);
-				lblTipo.setVisible(false);
-				lblProcesador.setVisible(false);
-				lblRam.setVisible(false);
-				lblSistema.setVisible(false);
-				lblSistemaOperativo.setVisible(false);
-				lblNewLabel.setVisible(false);
-				comboBox_1.setVisible(false);
-				comboBox_2.setVisible(false);
-				textField_1.setVisible(false);
-				textField_2.setVisible(false);
-				textField_3.setVisible(false);
-				textField_5.setVisible(false);
-				textField_6.setVisible(false);
-			}
-		});
+
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		dftm.addColumn("Nombre");
@@ -439,13 +257,19 @@ public class VistaBuscar extends JFrame {
 		dftm.addColumn("C.Owncloud");
 		dftm.addColumn("SistemaOpServidor");
 		rellenarTabla();
-
+		dftm2.addColumn("Nombre");
+		dftm2.addColumn("Tipo");
+		dftm2.addColumn("Procesador");
+		dftm2.addColumn("RAM");
+		dftm2.addColumn("Sistema");
+		dftm2.addColumn("Sistema Operativo");
+		dftm2.addColumn("Fecha Compra");
+		dftm2.addColumn("Precio");
+		rellenarTabla2();
 		scrollPane.setViewportView(table);
 		getContentPane().setLayout(groupLayout);
 		contenedor.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[] { scrollPane, table, textField,
-				btnRefrescar, btnBorrar, btnPc, comboBox, btnVolver, lblBuscador, lblEquipo, lblTipo, comboBox_1,
-				lblProcesador, textField_2, lblRam, textField_3, lblSistema, comboBox_2, lblSistemaOperativo,
-				textField_5, textField_6, lblNewLabel, textField_1, btnNewButton, lblPrecio }));
+				btnRefrescar, btnBorrar, comboBox, btnVolver, lblBuscador, lblEquipo }));
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("Arias Buscar");
 		setSize(1038, 542);
@@ -493,7 +317,7 @@ public class VistaBuscar extends JFrame {
 			ResultSet rs = nombre();
 			while (rs.next()) {
 				Object[] fila = new Object[16];// Creamos un Objeto con tantos
-												// parámetros como datos retorne
+				Object[] fila2 = new Object[8]; // parámetros como datos retorne
 												// cada fila
 												// de la consulta
 				fila[0] = rs.getString("NOMBRE"); // Lo que hay entre comillas
@@ -514,9 +338,16 @@ public class VistaBuscar extends JFrame {
 				fila[13] = rs.getString("OWNCLOUD");
 				fila[14] = rs.getString("CONTRA_OWNCLOUD");
 				fila[15] = rs.getString("SIST_OPER");
-
+				fila2[0] = rs.getString("NOMBRE");
+				fila2[1] = rs.getString("TIPO");
+				fila2[2] = rs.getString("PROCESADOR");
+				fila2[3] = rs.getString("RAM");
+				fila2[4] = rs.getString("SISTEMA");
+				fila2[5] = rs.getString("SIST_OPERATIVO");
+				fila2[6] = rs.getString("FECHA_INI");
+				fila2[7] = rs.getString("PRECIO");
 				dftm.addRow(fila); // Añade una fila al final del modelo de la
-									// tabla
+				dftm2.addRow(fila2); // tabla
 			}
 
 			table.updateUI();
@@ -535,8 +366,8 @@ public class VistaBuscar extends JFrame {
 			while (rs.next()) {
 				Object[] fila = new Object[16];// Creamos un Objeto con tantos
 												// parámetros como datos retorne
-												// cada fila
-												// de la consulta
+				Object[] fila2 = new Object[8]; // cada fila de la consulta
+
 				fila[0] = rs.getString("NOMBRE"); // Lo que hay entre comillas
 													// son los campos de la base
 													// de datos
@@ -555,9 +386,17 @@ public class VistaBuscar extends JFrame {
 				fila[13] = rs.getString("OWNCLOUD");
 				fila[14] = rs.getString("CONTRA_OWNCLOUD");
 				fila[15] = rs.getString("SIST_OPER");
+				fila2[0] = rs.getString("NOMBRE");
+				fila2[1] = rs.getString("TIPO");
+				fila2[2] = rs.getString("PROCESADOR");
+				fila2[3] = rs.getString("RAM");
+				fila2[4] = rs.getString("SISTEMA");
+				fila2[5] = rs.getString("SIST_OPERATIVO");
+				fila2[6] = rs.getString("FECHA_INI");
+				fila2[7] = rs.getString("PRECIO");
 
 				dftm.addRow(fila); // Añade una fila al final del modelo de la
-									// tabla
+				dftm2.addRow(fila2); // tabla
 			}
 
 			table.updateUI();
@@ -586,7 +425,7 @@ public class VistaBuscar extends JFrame {
 				fila[3] = rs.getString("CORREO_PRIVADO");
 				fila[4] = rs.getString("CONTRA_PRIVADO");
 				fila[5] = rs.getString("LICENCIA");
-				fila[6] = rs.getString("SErVIDOR");
+				fila[6] = rs.getString("SERVIDOR");
 				fila[7] = rs.getString("CONTRA_SERVIDOR");
 				fila[8] = rs.getString("IP");
 				fila[9] = rs.getString("DOMINIO");
@@ -598,6 +437,38 @@ public class VistaBuscar extends JFrame {
 				fila[15] = rs.getString("SIST_OPER");
 
 				dftm.addRow(fila); // Añade una fila al final del modelo de la
+									// tabla
+			}
+
+			table.updateUI();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void rellenarTabla2() {
+
+		try {
+			ResultSet rs = listas();
+			while (rs.next()) {
+				Object[] fila = new Object[16];// Creamos un Objeto con tantos
+												// parámetros como datos retorne
+												// cada fila
+												// de la consulta
+				fila[0] = rs.getString("NOMBRE"); // Lo que hay entre comillas
+													// son los campos de la base
+													// de datos
+				fila[1] = rs.getString("TIPO");
+				fila[2] = rs.getString("PROCESADOR");
+				fila[3] = rs.getString("RAM");
+				fila[4] = rs.getString("SISTEMA");
+				fila[5] = rs.getString("SIST_OPERATIVO");
+				fila[6] = rs.getString("FECHA_INI");
+				fila[7] = rs.getString("PRECIO");
+				dftm2.addRow(fila); // Añade una fila al final del modelo de la
 									// tabla
 			}
 
@@ -623,10 +494,12 @@ public class VistaBuscar extends JFrame {
 					if (columna == 0) {
 						query = "UPDATE usuario SET NOMBRE='" + table.getValueAt(fila, columna)
 								+ "' WHERE CORREO_CUENTA='" + table.getValueAt(fila, 1) + "'";
+
 					}
 					if (columna == 1) {
 						query = "UPDATE usuario SET CORREO_CUENTA='" + table.getValueAt(fila, columna)
 								+ "' WHERE CORREO_CUENTA='" + table.getValueAt(fila, 1) + "'";
+
 					}
 					if (columna == 2) {
 						query = "UPDATE usuario SET CONTRA_CUENTA='" + table.getValueAt(fila, columna)
@@ -687,6 +560,13 @@ public class VistaBuscar extends JFrame {
 					try {
 						stmt = conexion.createStatement();
 						int r = stmt.executeUpdate(query);
+
+						for (int j = 0; j < table.getRowCount(); j++) {
+							if (!table.getValueAt(j, 0).equals(table_1.getValueAt(j, 0))) {
+								table_1.setValueAt(table.getValueAt(j, 0), j, 0);
+							}
+						}
+
 						System.out.println("actualizado");
 
 					} catch (SQLException e1) {
@@ -698,6 +578,66 @@ public class VistaBuscar extends JFrame {
 				}
 			}
 		});
+		dftm2.addTableModelListener(new TableModelListener() {
+
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				// TODO Auto-generated method stub
+				if (e.getType() == TableModelEvent.UPDATE) {
+					int columna = e.getColumn();
+					int fila = e.getLastRow();
+					String query = "";
+					if (columna == 0) {
+						query = "UPDATE usuario SET NOMBRE='" + table_1.getValueAt(fila, columna)
+								+ "' WHERE CORREO_CUENTA='" + table_1.getValueAt(fila, 1) + "'";
+						table.setValueAt(table_1.getValueAt(fila, columna), fila, columna);
+					}
+					if (columna == 1) {
+						query = "UPDATE usuario SET TIPO ='" + table_1.getValueAt(fila, columna)
+								+ "' WHERE CORREO_CUENTA='" + table_1.getValueAt(fila, 1) + "'";
+					}
+					if (columna == 2) {
+						query = "UPDATE usuario SET PROCESADOR='" + table_1.getValueAt(fila, columna)
+								+ "' WHERE CORREO_CUENTA='" + table_1.getValueAt(fila, 1) + "'";
+					}
+					if (columna == 3) {
+						query = "UPDATE usuario SET RAM='" + table_1.getValueAt(fila, columna)
+								+ "' WHERE CORREO_CUENTA='" + table_1.getValueAt(fila, 1) + "'";
+					}
+					if (columna == 4) {
+						query = "UPDATE usuario SET SISTEMA='" + table_1.getValueAt(fila, columna)
+								+ "' WHERE CORREO_CUENTA='" + table_1.getValueAt(fila, 1) + "'";
+					}
+					if (columna == 5) {
+						query = "UPDATE usuario SET SIST_OPERATIVO='" + table_1.getValueAt(fila, columna)
+								+ "' WHERE CORREO_CUENTA='" + table_1.getValueAt(fila, 1) + "'";
+					}
+					if (columna == 6) {
+						query = "UPDATE usuario SET FECHA_INI='" + table_1.getValueAt(fila, columna)
+								+ "' WHERE CORREO_CUENTA='" + table_1.getValueAt(fila, 1) + "'";
+					}
+					if (columna == 7) {
+						query = "UPDATE usuario SET PRECIO='" + table_1.getValueAt(fila, columna)
+								+ "' WHERE CORREO_CUENTA='" + table_1.getValueAt(fila, 1) + "'";
+					}
+					if (!query.equals("")) {
+						try {
+							stmt = conexion.createStatement();
+							int r = stmt.executeUpdate(query);
+							System.out.println("actualizado2");
+
+						} catch (SQLException e1) {
+							System.out.println("error actu2");
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
+					}
+
+				}
+			}
+		});
+
 	}
 
 	public void eliminar() {
@@ -708,138 +648,17 @@ public class VistaBuscar extends JFrame {
 			stmt.executeUpdate(query);
 			stmt.close();
 			System.out.println("eliminado ok");
+			while (dftm.getRowCount() > 0) {
+				dftm.removeRow(0);
+			}
+			while (dftm2.getRowCount() > 0) {
+				dftm2.removeRow(0);
+			}
+			rellenarTabla();
+			rellenarTabla2();
 		} catch (SQLException e) {
 			System.out.println("eliminado problema");
 		}
-	}
-
-	public void actualizar_tipo() {
-		int fila = table.getSelectedRow();
-		String query = "UPDATE usuario SET TIPO='" + comboBox_1.getSelectedItem().toString() + "' WHERE CORREO_CUENTA='"
-				+ table.getValueAt(fila, 1) + "'";
-		;
-		try {
-			stmt = conexion.createStatement();
-			stmt.executeUpdate(query);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void actualizar_procesador() {
-		int fila = table.getSelectedRow();
-		String query = "UPDATE usuario SET PROCESADOR='" + textField_2.getText() + "' WHERE CORREO_CUENTA='"
-				+ table.getValueAt(fila, 1) + "'";
-		;
-		try {
-			stmt = conexion.createStatement();
-			stmt.executeUpdate(query);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void actualizar_ram() {
-		int fila = table.getSelectedRow();
-		String query = "UPDATE usuario SET RAM='" + textField_3.getText() + "' WHERE CORREO_CUENTA='"
-				+ table.getValueAt(fila, 1) + "'";
-		;
-		try {
-			stmt = conexion.createStatement();
-			stmt.executeUpdate(query);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void actualizar_sistema() {
-		int fila = table.getSelectedRow();
-		String query = "UPDATE usuario SET SISTEMA='" + comboBox_2.getSelectedItem().toString()
-				+ "' WHERE CORREO_CUENTA='" + table.getValueAt(fila, 1) + "'";
-		;
-		try {
-			stmt = conexion.createStatement();
-			stmt.executeUpdate(query);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void actualizar_SistOper() {
-		int fila = table.getSelectedRow();
-		String query = "UPDATE usuario SET SIST_OPERATIVO='" + textField_5.getText() + "' WHERE CORREO_CUENTA='"
-				+ table.getValueAt(fila, 1) + "'";
-		;
-		try {
-			stmt = conexion.createStatement();
-			stmt.executeUpdate(query);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void actualizar_Fecha() {
-		int fila = table.getSelectedRow();
-		String query = "UPDATE usuario SET FECHA_INI='" + textField_6.getText() + "' WHERE CORREO_CUENTA='"
-				+ table.getValueAt(fila, 1) + "'";
-		;
-		try {
-			stmt = conexion.createStatement();
-			stmt.executeUpdate(query);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void actualizar_precio() {
-		int fila = table.getSelectedRow();
-		String query = "UPDATE usuario SET PRECIO='" + textField_1.getText() + "' WHERE CORREO_CUENTA='"
-				+ table.getValueAt(fila, 1) + "'";
-		;
-		try {
-			stmt = conexion.createStatement();
-			stmt.executeUpdate(query);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void darValor() {
-		int fila = table.getSelectedRow();
-		String query = "SELECT * FROM usuario WHERE CORREO_CUENTA ='" + table.getValueAt(fila, 1) + "'";
-		try {
-			stmt = conexion.prepareStatement(query);
-			ResultSet rset = stmt.executeQuery(query);
-			if (rset == null) {
-			} else {
-				while (rset.next()) {
-					String tipo = rset.getString(17);
-					String procesador = rset.getString(18);
-					String ram = rset.getString(19);
-					String sistema = rset.getString(20);
-					String sistema_op = rset.getString(21);
-					String fecha = rset.getString(22);
-					String precio = rset.getString(23);
-
-					comboBox_1.setSelectedItem(tipo);
-					textField_2.setText(procesador);
-					textField_3.setText(ram);
-					comboBox_2.setSelectedItem(sistema);
-					textField_5.setText(sistema_op);
-					textField_6.setText(fecha);
-					textField_1.setText(precio);
-				}
-			}
-		} catch (Exception e) {
-		}
-
 	}
 
 	// public void fichero() {
@@ -904,47 +723,34 @@ public class VistaBuscar extends JFrame {
 	// ex.printStackTrace();
 	// }
 	// }
-	public void exportarjTable(JTable tabla, File ficheroXLS) throws IOException {
+	public void exportarjTable(JTable tabla, JTable tabla2, File ficheroXLS) throws IOException {
 		TableModel modelo = tabla.getModel();
+		TableModel modelo2 = tabla2.getModel();
 		FileWriter fichero = new FileWriter(ficheroXLS);
 		for (int i = 0; i < modelo.getColumnCount(); i++) {
 			fichero.write(modelo.getColumnName(i) + "\t");
 		}
-		fichero.write("Tipo" + "\t");
-		fichero.write("Procesador" + "\t");
-		fichero.write("RAM" + "\t");
-		fichero.write("Sistema" + "\t");
-		fichero.write("Sistema Operativo" + "\t");
-		fichero.write("Fecha compra" + "\t");
-		fichero.write("Precio" + "\t");
+		fichero.write("\t");
+		fichero.write("\t");
+		for (int i = 0; i < modelo.getColumnCount(); i++) {
+			fichero.write(modelo2.getColumnName(i) + "\t");
+		}
 		fichero.write("\n");
+
 		for (int i = 0; i < modelo.getRowCount(); i++) {
 			for (int j = 0; j < modelo.getColumnCount(); j++) {
 				fichero.write(modelo.getValueAt(i, j).toString() + "\t");
 			}
-			String query = "SELECT * FROM usuario WHERE CORREO_CUENTA ='" + dftm.getValueAt(i, 1) + "'";
-			try {
-				stmt = conexion.prepareStatement(query);
-				ResultSet rset = stmt.executeQuery(query);
-				String tipo = rset.getString(17);
-				String procesador = rset.getString(18);
-				String ram = rset.getString(19);
-				String sistema = rset.getString(20);
-				String sistema_op = rset.getString(21);
-				String fecha = rset.getString(22);
-				String precio = rset.getString(23);
-				fichero.write(tipo +"\t");
-				fichero.write(procesador +"\t");
-				fichero.write(ram +"\t");
-				fichero.write(sistema +"\t");
-				fichero.write(sistema_op +"\t");
-				fichero.write(fecha +"\t");
-				fichero.write(precio +"\t");
-			} catch (Exception e) {
-				// TODO: handle exception
+			fichero.write("\t");
+			fichero.write("\t");
+
+			for (int j = 0; j < modelo2.getColumnCount(); j++) {
+				fichero.write(modelo2.getValueAt(i, j)+"\t");
 			}
+
 			fichero.write("\n");
 		}
+
 		fichero.close();
 	}
 
